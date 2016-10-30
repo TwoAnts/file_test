@@ -1,0 +1,6 @@
+test.img
+*.pyc
+*.txt
+*.o
+*.sh
+
