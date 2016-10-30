@@ -6,6 +6,9 @@ SIZE = 200 * 1024 #KB
 
 RQ_CNT = 300
 
+def gen_filename():
+    return 'cnt_%s_%sKB.txt' %(RQ_CNT, SIZE)
+
 
 def gen_split_array(sum, length):
     s = 0.0
@@ -29,8 +32,12 @@ def gen_split_array(sum, length):
 
 if __name__ == '__main__':
     sa = gen_split_array(SIZE, RQ_CNT)
-    print sa
-    print sum(sa)
+    ofn = gen_filename()
+    with open(ofn, 'w') as fout:
+        for s in sa:
+            fout.write('%s\n' %s)
+
+
     
 
 
