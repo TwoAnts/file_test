@@ -1,4 +1,4 @@
-test.img
+*.img
 *.pyc
 *.txt
 *.o

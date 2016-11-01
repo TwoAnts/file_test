@@ -78,7 +78,7 @@ static void * read_thread(void *arg)
     for(i = 0;i < rq_size_num;i++)
     {
         size = rq_size[i]; 
-        printf("[read %5dKB] %s\n", size, target);
+        //printf("[read %5dKB] %s\n", size, target);
         for(;size > 0;size--)
         {
             count = read(fd, buffer, BUF_SIZE);
@@ -87,6 +87,17 @@ static void * read_thread(void *arg)
                 error(0, errno, "read %s count %d", target, count);
                 return NULL;
             }
+            /*
+            for(count--;count >= 0;count--)
+            {
+                if(buffer[count] != 'u')
+                {
+                    error(0, errno, "read %c at %d*BUF_SIZE+%d", buffer[count],\
+                                                             size, count);
+                    return NULL;
+                }
+            }
+            */
         } 
     } 
     clock_gettime(CLOCK_REALTIME, &ts2);
@@ -98,8 +109,50 @@ static void * read_thread(void *arg)
     return ts_diff;
 }
 
-
-
+static void * read_thread_with_FILE(void *arg)
+{
+    char *target = (char *)arg;
+    FILE *f = fopen(target, "rb");
+    if(!f) {error(0, errno, "open %s failed!", target); return NULL;}
+    int i, size;
+    char *buffer = (char *)malloc(BUF_SIZE);
+    ssize_t count;
+    struct timespec ts1, ts2;
+    struct timespec * ts_diff = (struct timespec *)malloc(sizeof(struct timespec));
+    clock_gettime(CLOCK_REALTIME, &ts1);
+    for(i = 0;i < rq_size_num;i++)
+    {
+        size = rq_size[i]; 
+        //printf("[read %5dKB] %s\n", size, target);
+        for(;size > 0;size--)
+        {
+            count = fread(buffer, sizeof(char), BUF_SIZE, f);
+            if(count != BUF_SIZE) 
+            {   
+                error(0, errno, "read %s count %d", target, count);
+                return NULL;
+            }
+            /*
+            for(count--;count >= 0;count--)
+            {
+                if(buffer[count] != 'u')
+                {
+                    error(0, errno, "read %c at %d*BUF_SIZE+%d", buffer[count],\
+                                                             size, count);
+                    return NULL;
+                }
+            }
+            */
+        } 
+    } 
+    clock_gettime(CLOCK_REALTIME, &ts2);
+    free(buffer);
+    fclose(f);
+    
+    timespec_diff(&ts1, &ts2, ts_diff);
+    
+    return ts_diff;
+}
 
 int main(int argc, char* argv[])
 {
