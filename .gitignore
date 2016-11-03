@@ -3,4 +3,5 @@
 *.txt
 *.o
 *.sh
+rw_c/read
 

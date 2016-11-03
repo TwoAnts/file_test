@@ -84,7 +84,7 @@ static void * read_thread(void *arg)
             count = read(fd, buffer, BUF_SIZE);
             if(count != BUF_SIZE) 
             {   
-                error(0, errno, "read %s count %d", target, count);
+                error(0, errno, "read %s count %d", target, (int)count);
                 return NULL;
             }
             /*
@@ -101,6 +101,7 @@ static void * read_thread(void *arg)
         } 
     } 
     clock_gettime(CLOCK_REALTIME, &ts2);
+    posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
     free(buffer);
     close(fd);
     
@@ -129,7 +130,7 @@ static void * read_thread_with_FILE(void *arg)
             count = fread(buffer, sizeof(char), BUF_SIZE, f);
             if(count != BUF_SIZE) 
             {   
-                error(0, errno, "read %s count %d", target, count);
+                error(0, errno, "read %s count %d", target, (int)count);
                 return NULL;
             }
             /*

@@ -2,9 +2,9 @@
 
 import random
 
-SIZE = 200 * 1024 #KB
+SIZE = 8 * 1024 * 1024 #KB
 
-RQ_CNT = 300
+RQ_CNT = 3000
 
 def gen_filename():
     return 'cnt_%s_%sKB.txt' %(RQ_CNT, SIZE)
